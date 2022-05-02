@@ -21,40 +21,76 @@ exports.deleteMe = async (req, res, next) => {
 exports.getOne = async (req, res, next) => {
     try {
         const doc = await User.findById(req.params.id);
-
+        console.log(doc)
         if (!doc) {
-            return next(new AppError(404, 'fail', 'No document found with that id'), req, res, next);
+            res.json({
+                status:404,
+                message :'no user found with this id'
+            })
         }
-
-        res.status(200).json({
+        res.json({
             status: 'success',
             data: {
                 doc
             }
         });
     } catch (error) {
-        next(error);
+        res.json({
+            error :error
+        })
     }
 };
 
 exports.getAll = async (req, res, next) => {
     try {
-        const features = User.find()
-
-        const doc = await features.query;
-
-        res.status(200).json({
+        const users = await User.find();
+        res.json({
             status: 'success',
-           
-            data: {
-                data: doc
-            }
+            data: users
         });
-
     } catch (error) {
-        next(error);
+        res.json({
+            error :error
+        })
     }
 
 };
+
+exports.createUser = async (req, res, next) => {
+    let resBody = '';
+    console.log(req.body);
+    if(Object.keys(req.body).length == 0) {
+        res.json({
+            status: 500,
+            message: "Empty Obj not allowed"
+        });
+    } else {
+        const newUser = new User({
+            name : req.body.name,
+            email :req.body.email,
+            address : req.body.address,
+            password : req.body.password,
+            passwordConfirm : req.body.passwordConfirm
+        }) 
+
+        newUser.save().then(result =>{
+            console.log('USER Created!')
+        }).catch(err =>{
+           res.json({
+               error :err.errors
+           })
+        })
+    }
+    
+}
+
+exports.updateUser = async (req, res, next) => {
+    User.findByIdAndUpdate(req.params.id,req.body, (err,user)=>{
+        if (err) {
+            return res.status(500).send({error: "Problem with Updating the Employee recored "})
+        };
+        res.send({success: "Updation successfull"});
+    })
+}
 
 

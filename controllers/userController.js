@@ -101,4 +101,14 @@ exports.updateUser = async (req, res, next) => {
     })
 }
 
+exports.loginUser = async (req, res, next) => {
+    var userFound = User.findOne({ name: req.body.email, password: req.body.password });
+    console.log(userFound);
+    if(userFound){
+        console.log("Book not exists with this id");
+    } else {
+        console.log(userFound);
+    }
+}
+
 

@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+var mongoose = require("mongoose");
 
 
 exports.deleteMe = async (req, res, next) => {
@@ -85,11 +86,18 @@ exports.createUser = async (req, res, next) => {
 }
 
 exports.updateUser = async (req, res, next) => {
-    User.findByIdAndUpdate(req.params.id,req.body, (err,user)=>{
-        if (err) {
-            return res.status(500).send({error: "Problem with Updating the Employee recored "})
-        };
-        res.send({success: "Updation successfull"});
+    const updateUser = req.body; 
+    User.findById(req.params.id, function (err, foundUser) {
+        if(foundUser === null){
+            console.log("Book not exists with this id");
+        } else {
+            User.findByIdAndUpdate(req.params.id,updateUser,{}, (err,user)=>{
+                if (err) {
+                    return res.status(500).send({error: "Problem with Updating the Employee recored "})
+                };
+                res.send({success: req.body});
+            })
+        }
     })
 }
 

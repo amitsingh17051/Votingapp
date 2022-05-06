@@ -24,8 +24,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 const userRoutes = require('./routes/userRoutes');
+const votingRoutes = require('./routes/votingRoutes');
 
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/voting', votingRoutes);
 
 
 app.listen(port, () => {

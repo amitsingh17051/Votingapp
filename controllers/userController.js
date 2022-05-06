@@ -1,6 +1,6 @@
 const User = require('../models/userModel');
-var mongoose = require("mongoose");
-
+const mongoose = require("mongoose");
+const jwt = require('jsonwebtoken');
 
 exports.deleteMe = async (req, res, next) => {
     try {
@@ -102,12 +102,18 @@ exports.updateUser = async (req, res, next) => {
 }
 
 exports.loginUser = async (req, res, next) => {
-    var userFound = User.findOne({ name: req.body.email, password: req.body.password });
-    console.log(userFound);
+    const userFound = await User.findOne( req.body );
     if(userFound){
-        console.log("Book not exists with this id");
+        const token = jwt.sign({ sub: userFound.id }, 'amit', { expiresIn: '7d' });
+        res.json({
+            ...userFound.toJSON(),
+            token
+        });
     } else {
-        console.log(userFound);
+        res.json({
+            status: 404,
+            message: "incorrect credential"
+       })
     }
 }
 
